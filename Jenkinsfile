@@ -14,6 +14,7 @@ pipeline {
     environment {
         CLOUDERA_HOST = 'ec2-user@13.41.167.97'
         SSH_KEY       = '/var/lib/jenkins/.ssh/id_rsa'
+        PYTHON_BIN    = 'python3'
     }
 
     stages {
@@ -24,11 +25,16 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        stage('Run Tests (Python3)') {
             steps {
                 sh '''
-                    python3 -m venv venv
+                    ${PYTHON_BIN} --version
+
+                    ${PYTHON_BIN} -m venv venv
                     . venv/bin/activate
+
+                    python -m pip install --upgrade pip setuptools wheel
+
                     pip install -r requirements.txt
                     pytest tests/
                 '''
@@ -49,7 +55,7 @@ pipeline {
             }
         }
 
-        stage('Submit Spark Job') {
+        stage('Submit Spark Job (Python3)') {
             steps {
                 sh '''
                     ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${CLOUDERA_HOST} "
@@ -57,6 +63,8 @@ pipeline {
                         export HADOOP_CONF_DIR=/etc/hadoop/conf
                         export SPARK_CONF_DIR=/etc/spark/conf
                         export PYSPARK_PYTHON=/usr/bin/python3
+
+                        python3 --version
 
                         spark-submit \
                           --master yarn \
