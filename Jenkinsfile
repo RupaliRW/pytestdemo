@@ -29,7 +29,7 @@ pipeline {
 
                     # Fix your main issue (old pip)
                     ${PYTHON_BIN} -m pip install --upgrade pip setuptools wheel
-
+                    export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
                     # Install pytest safely (avoid strict version failure)
                     ${PYTHON_BIN} -m pip install "pytest>=6.2,<8"
 
