@@ -29,7 +29,7 @@ def transform_orders(df):
 if __name__ == "__main__":
     spark = SparkSession.builder.appName("orders_etl").getOrCreate()
 
-    df = read_orders(spark, ".\src\orders.csv")
+    df = read_orders(spark, "orders.csv")
     print("file")
     result = transform_orders(df)
     result.show(5)
