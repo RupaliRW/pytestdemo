@@ -33,4 +33,4 @@ if __name__ == "__main__":
     print("file")
     result = transform_orders(df)
     result.show(5)
-    result.write.mode("overwrite").partitionBy("year", "month").parquet("output/orders")
+    result.write.mode("overwrite").partitionBy("year", "month").parquet("/tmp/routput/orders")
