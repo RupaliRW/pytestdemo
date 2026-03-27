@@ -29,8 +29,8 @@ def transform_orders(df):
 if __name__ == "__main__":
     spark = SparkSession.builder.appName("orders_etl").getOrCreate()
 
-    df = read_orders(spark, "orders.csv")
+    df = read_orders(spark, "/tmp/rupalicicd/data/orders.csv")
     print("file")
     result = transform_orders(df)
     result.show(5)
-    result.write.mode("overwrite").partitionBy("year", "month").parquet("/tmp/routput/orders")
+    result.write.mode("overwrite").partitionBy("year", "month").parquet("/tmp/rupalicicd/routput/orders")
