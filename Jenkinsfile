@@ -71,30 +71,36 @@ pipeline {
         }
 
         stage('Submit Spark Job') {
-            steps {
-                sh '''
-                    echo "=== Submitting ${JOB_TYPE} ==="
+    steps {
+        sh '''
+            echo "=== Submitting ${JOB_TYPE} ==="
 
-                    ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${CLOUDERA_HOST} "
-                        export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
-                        export HADOOP_CONF_DIR=/etc/hadoop/conf
-                        export SPARK_CONF_DIR=/etc/spark/conf
-                        export PYSPARK_PYTHON=/usr/bin/python3
+            ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${CLOUDERA_HOST} "bash -lc '
+                set -e
 
-                        spark-submit \
-                          --master yarn \
-                          --deploy-mode client \
-                          --name ${JOB_TYPE}-jenkins-${BUILD_NUMBER} \
-                          --num-executors ${NUM_EXECUTORS} \
-                          --executor-cores 1 \
-                          --executor-memory ${EXECUTOR_MEMORY} \
-                          --driver-memory 512m \
-                          --conf spark.pyspark.python=/usr/bin/python3 \
-                          ${SPARK_SCRIPTS}/${JOB_TYPE}.py
-                    "
-                '''
-            }
-        }
+                export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
+                export HADOOP_CONF_DIR=/etc/hadoop/conf
+                export SPARK_CONF_DIR=/etc/spark/conf
+                export PYSPARK_PYTHON=/usr/bin/python3
+                export SPARK_HOME=/usr/lib/spark
+                export PATH=$SPARK_HOME/bin:$PATH
+
+                echo "Using spark-submit from: \$(which spark-submit)"
+
+                spark-submit \
+                  --master yarn \
+                  --deploy-mode client \
+                  --name ${JOB_TYPE}-jenkins-${BUILD_NUMBER} \
+                  --num-executors ${NUM_EXECUTORS} \
+                  --executor-cores 1 \
+                  --executor-memory ${EXECUTOR_MEMORY} \
+                  --driver-memory 512m \
+                  --conf spark.pyspark.python=/usr/bin/python3 \
+                  ${SPARK_SCRIPTS}/${JOB_TYPE}.py
+            '"
+        '''
+    }
+}
 
         stage('Check YARN Result') {
             steps {
