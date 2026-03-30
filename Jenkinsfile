@@ -82,8 +82,8 @@ pipeline {
                 export HADOOP_CONF_DIR=/etc/hadoop/conf
                 export SPARK_CONF_DIR=/etc/spark/conf
                 export PYSPARK_PYTHON=/usr/bin/python3
-                export SPARK_HOME=/usr/lib/spark
-                export PATH=$SPARK_HOME/bin:$PATH
+                #export SPARK_HOME=/usr/lib/spark
+                #export PATH=$SPARK_HOME/bin:$PATH
 
                 echo "Using spark-submit from: \$(which spark-submit)"
 
